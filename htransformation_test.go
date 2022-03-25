@@ -187,6 +187,27 @@ func TestHeaderRules(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "rename rule",
+			rule: types.Rule{
+				Name:   "rename rule",
+				Header: "not-empty",
+				Value:  "not-empty",
+				Type:   types.Rename,
+			},
+			wantErr: false,
+		},
+		{
+			name: "rewrite rule",
+			rule: types.Rule{
+				Name:   "rewrite rule",
+				Header: "not-empty",
+				Value:  "not-empty",
+				ValueReplace: "not-empty",
+				Type:   types.RewriteValueRule,
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, test := range tests {
@@ -207,6 +228,8 @@ func TestHeaderRules(t *testing.T) {
 
 			req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost", nil)
 			require.NoError(t, err)
+
+			req.Header.Set("Referer", "http://google.com")
 
 			handler.ServeHTTP(recorder, req)
 			result := recorder.Result()
